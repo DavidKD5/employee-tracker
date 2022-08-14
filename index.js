@@ -1,17 +1,14 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 
-const db = mysql.createConnection(
-  {
-    host: "localhost",
-    // Your MySQL username,
-    user: "root",
-    // Your MySQL password
-    password: "pgadmin",
-    database: "employee_db",
-  },
-  console.log("connected to the matrix")
-);
+const db = mysql.createConnection({
+  host: "localhost",
+  // Your MySQL username,
+  user: "root",
+  // Your MySQL password
+  password: "pgadmin",
+  database: "employee_db",
+});
 
 const startQues = {
   type: "list",
@@ -58,9 +55,8 @@ LEFT JOIN employee manager ON manager.id = employee.manager_id`;
 
   db.query(query, (err, res) => {
     console.table(res);
+    init();
   });
-
-  init();
 }
 
 function viewDepartments() {
@@ -68,9 +64,8 @@ function viewDepartments() {
 
   db.query(query, (err, res) => {
     console.table(res);
+    init();
   });
-
-  init();
 }
 
 function viewRoles() {
@@ -80,9 +75,8 @@ function viewRoles() {
 
   db.query(query, (err, res) => {
     console.table(res);
+    init();
   });
-
-  init();
 }
 
 function addDepartment() {
@@ -98,13 +92,13 @@ function addDepartment() {
       var query = `INSERT INTO department
   (name)
 VALUES
-  ('${response.newDepartment}'),`;
+  ('${response.newDepartment}')`;
 
       db.query(query, (err, res) => {
         console.log("department added");
+        init();
       });
     });
-  init();
 }
 
 function addRole() {
@@ -140,13 +134,13 @@ function addRole() {
 
       var query = `INSERT INTO role (title, salary, department_id)
 VALUES
-  ('${response.newRole}', '${response.newSalary}', '${id}'),`;
+  ('${response.newRole}', '${response.newSalary}', '${id}')`;
 
       db.query(query, (err, res) => {
         console.log("role added");
+        init();
       });
     });
-  init();
 }
 
 function addEmployee() {
@@ -228,12 +222,12 @@ function addEmployee() {
 
       var query = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
     VALUES
-  ('${response.newFirstName}', '${response.newLastName}', '${employeeRole}', '${manager}'),`;
+  ('${response.newFirstName}', '${response.newLastName}', '${employeeRole}', '${manager}')`;
 
       db.query(query, (err, res) => {
         console.log("employee added");
+        init();
       });
     });
-  init();
 }
 init();
