@@ -3,13 +3,12 @@ const inquirer = require("inquirer");
 
 const db = mysql.createConnection({
   host: "localhost",
-  // Your MySQL username,
   user: "root",
-  // Your MySQL password
   password: "pgadmin",
   database: "employee_db",
 });
 
+// Main menu questions
 const startQues = {
   type: "list",
   name: "mainMenu",
@@ -25,6 +24,7 @@ const startQues = {
   ],
 };
 
+// functions for each selection in the main menu
 function init() {
   inquirer.prompt(startQues).then((response) => {
     if (response.mainMenu === "View All Employees") {
@@ -32,7 +32,7 @@ function init() {
     } else if (response.mainMenu === "Add Employee") {
       addEmployee();
     } else if (response.mainMenu === "Update Employee Role") {
-      viewEmployees();
+      updateEmployee();
     } else if (response.mainMenu === "View All Roles") {
       viewRoles();
     } else if (response.mainMenu === "Add Role") {
@@ -45,6 +45,7 @@ function init() {
   });
 }
 
+// View all employees
 function viewEmployees() {
   var query = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, " ", manager.last_name) AS manager
 FROM employee
@@ -59,6 +60,7 @@ LEFT JOIN employee manager ON manager.id = employee.manager_id`;
   });
 }
 
+// view all departments
 function viewDepartments() {
   var query = `SELECT * FROM department`;
 
@@ -68,6 +70,7 @@ function viewDepartments() {
   });
 }
 
+// view all roles
 function viewRoles() {
   var query = `SELECT role.id, role.title, department.name AS department, role.salary
     FROM role
@@ -79,6 +82,7 @@ function viewRoles() {
   });
 }
 
+// add new department
 function addDepartment() {
   inquirer
     .prompt([
@@ -101,6 +105,7 @@ VALUES
     });
 }
 
+// add new role
 function addRole() {
   inquirer
     .prompt([
@@ -143,6 +148,7 @@ VALUES
     });
 }
 
+// add new employee
 function addEmployee() {
   inquirer
     .prompt([
@@ -217,7 +223,7 @@ function addEmployee() {
       } else if (response.newEmployeeRole == "Accountant") {
         var employeeRole = 6;
       } else if (response.newEmployeeRole == "Legal Team Lead") {
-        var employeeRole = 6;
+        var employeeRole = 7;
       }
 
       var query = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -230,4 +236,86 @@ function addEmployee() {
       });
     });
 }
+
+// update employee role
+function updateEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "updateEmployee",
+        message: "Which employee's role do you want to update?",
+        choices: [
+          "John Doe",
+          "Mike Chan",
+          "Ashley Rodriguez",
+          "Kevin Tupik",
+          "Kunal Singh",
+          "Malia Brown",
+          "Sara Lourd",
+          "Tom Allen",
+        ],
+      },
+      {
+        type: "list",
+        name: "updateRole",
+        message: "Which role do you want to assign the selected employee?",
+        choices: [
+          "Sales Lead",
+          "Salesperson",
+          "Lead Engineer",
+          "Software Engineer",
+          "Account Manager",
+          "Accountant",
+          "Legal Team Lead",
+        ],
+      },
+    ])
+    .then((response) => {
+      if (response.updateEmployee == "Sara Lourd") {
+        var id = 7;
+      } else if (response.updateEmployee == "John Doe") {
+        var id = 1;
+      } else if (response.updateEmployee == "Mike Chan") {
+        var id = 2;
+      } else if (response.updateEmployee == "Ashley Rodriguez") {
+        var id = 3;
+      } else if (response.updateEmployee == "Kevin Tupik") {
+        var id = 4;
+      } else if (response.updateEmployee == "Kunual Singh") {
+        var id = 5;
+      } else if (response.updateEmployee == "Malia Brown") {
+        var id = 6;
+      } else if (response.updateEmployee == "Tom Allen") {
+        var id = 8;
+      }
+
+      if (response.updateRole == "None") {
+        var employeeRole = null;
+      } else if (response.updateRole == "Sales Lead") {
+        var employeeRole = 1;
+      } else if (response.updateRole == "Salesperson") {
+        var employeeRole = 2;
+      } else if (response.updateRole == "Lead Engineer") {
+        var employeeRole = 3;
+      } else if (response.updateRole == "Software Engineer") {
+        var employeeRole = 4;
+      } else if (response.updateRole == "Account Manager") {
+        var employeeRole = 5;
+      } else if (response.updateRole == "Accountant") {
+        var employeeRole = 6;
+      } else if (response.updateRole == "Legal Team Lead") {
+        var employeeRole = 7;
+      }
+
+      var query = `UPDATE employee SET role_id = '${employeeRole}' WHERE id = ${id}`;
+
+      db.query(query, (err, res) => {
+        console.log("employee updated");
+        init();
+      });
+    });
+}
+
+// Initialize application
 init();
